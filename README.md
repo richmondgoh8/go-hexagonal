@@ -16,6 +16,6 @@ Ports <=> Actors
 # Effective Go
 - Good package names are short and clear. They are lower case, with no under_scores or mixedCaps
 - Source files are all lower case with underscore separating multiple words.
-- Constant should use all capital letters and use underscore _ to separate words.
 - Variables and Unexported Functions = camelCase
-- Exported Functions = PascalCase
+- Exported Functions & Constants = PascalCase
+- Contexts are generally used to carry custom data among handlers.
