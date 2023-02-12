@@ -1,11 +1,11 @@
 package main
 
 import (
+	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	svc "github.com/richmondgoh8/boilerplate/internal/core/services/link"
 	handler "github.com/richmondgoh8/boilerplate/internal/handlers/link"
@@ -21,7 +21,7 @@ func main() {
 	config.InitReader()
 	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal(apperror.EMPTY_PORT)
+		log.Fatal(apperror.EmptyPort)
 	}
 
 	r := chi.NewRouter()
