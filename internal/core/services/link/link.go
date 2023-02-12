@@ -12,6 +12,11 @@ type LinkSvc struct {
 	linkRepository ports.LinkRepository
 }
 
+type LinkSvcImpl interface {
+	GetURLData(ctx context.Context, id string) (domain.Link, error)
+	UpdateURLData(ctx context.Context, link domain.Link) error
+}
+
 // NewLinkSvc Takes in Interface, Return Struct
 func NewLinkSvc(linkRepository ports.LinkRepository) *LinkSvc {
 	return &LinkSvc{
@@ -19,7 +24,7 @@ func NewLinkSvc(linkRepository ports.LinkRepository) *LinkSvc {
 	}
 }
 
-func (srv *LinkSvc) GetURL(ctx context.Context, id string) (domain.Link, error) {
+func (srv *LinkSvc) GetURLData(ctx context.Context, id string) (domain.Link, error) {
 	link, err := srv.linkRepository.GetURL(ctx, id)
 	if err != nil {
 		return domain.Link{}, errors.New("get link from repository has failed")
@@ -28,7 +33,7 @@ func (srv *LinkSvc) GetURL(ctx context.Context, id string) (domain.Link, error) 
 	return link, nil
 }
 
-func (srv *LinkSvc) UpdateURL(ctx context.Context, link domain.Link) error {
+func (srv *LinkSvc) UpdateURLData(ctx context.Context, link domain.Link) error {
 	_, err := srv.linkRepository.GetURL(ctx, link.ID)
 	if err != nil {
 		return err

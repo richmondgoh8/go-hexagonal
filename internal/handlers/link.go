@@ -4,20 +4,20 @@ import (
 	"encoding/json"
 	"github.com/go-playground/validator/v10"
 	"github.com/richmondgoh8/boilerplate/internal/core/domain"
+	svc "github.com/richmondgoh8/boilerplate/internal/core/services/link"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/richmondgoh8/boilerplate/internal/core/ports"
 )
 
 type URLHandler struct {
-	linkRepository ports.LinkRepository
+	linkSvc svc.LinkSvcImpl
 }
 
-func NewURLHandlerImpl(linkRepository ports.LinkRepository) *URLHandler {
+func NewURLHandlerImpl(linkSvc svc.LinkSvcImpl) *URLHandler {
 	return &URLHandler{
-		linkRepository: linkRepository,
+		linkSvc: linkSvc,
 	}
 }
 
@@ -33,7 +33,7 @@ func (h *URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := h.linkRepository.GetURL(ctx, linkID)
+	resp, err := h.linkSvc.GetURLData(ctx, linkID)
 	if err != nil {
 		json.NewEncoder(w).Encode(&domain.SimpleResp{
 			Message:    err.Error(),
@@ -79,7 +79,7 @@ func (h *URLHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.linkRepository.UpdateURL(ctx, *urlUpdateReq)
+	err = h.linkSvc.UpdateURLData(ctx, *urlUpdateReq)
 	if err != nil {
 		json.NewEncoder(w).Encode(&domain.SimpleResp{
 			Message:    err.Error(),

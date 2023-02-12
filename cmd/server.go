@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/go-chi/chi/v5"
+	svc "github.com/richmondgoh8/boilerplate/internal/core/services/link"
 	handler "github.com/richmondgoh8/boilerplate/internal/handlers"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/go-chi/chi/v5/middleware"
-	svc "github.com/richmondgoh8/boilerplate/internal/core/services/link"
 	"github.com/richmondgoh8/boilerplate/internal/platform/config"
 	"github.com/richmondgoh8/boilerplate/internal/platform/db"
 	repo "github.com/richmondgoh8/boilerplate/internal/repositories/postgres"
