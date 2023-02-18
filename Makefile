@@ -1,4 +1,4 @@
-.PHONY: postgres destroy
+.PHONY: postgres destroy run
 
 postgres:
 	docker-compose -f ~docker/postgres/docker-compose.yml up -d -V
@@ -8,3 +8,6 @@ destroy:
 
 run:
 	go run cmd/server.go
+
+gen:
+	mockgen -source=./internal/core/ports/ports.go -destination=./internal/mocks/core/ports/ports.go

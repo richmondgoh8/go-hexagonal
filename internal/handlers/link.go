@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"github.com/go-playground/validator/v10"
 	"github.com/richmondgoh8/boilerplate/internal/core/domain"
-	svc "github.com/richmondgoh8/boilerplate/internal/core/services/link"
+	svc "github.com/richmondgoh8/boilerplate/internal/core/services"
+	"github.com/richmondgoh8/boilerplate/pkg/logger"
 	"net/http"
 	"strconv"
 
@@ -33,6 +34,7 @@ func (h *URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	logger.Info("Start URL Handler", ctx, nil)
 	resp, err := h.linkSvc.GetURLData(ctx, linkID)
 	if err != nil {
 		json.NewEncoder(w).Encode(&domain.SimpleResp{
@@ -42,7 +44,6 @@ func (h *URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(&resp)
 }
 

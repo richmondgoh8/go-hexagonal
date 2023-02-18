@@ -20,5 +20,9 @@ func InitReader() {
 		log.Fatalf("Error loading %s.env file", environment)
 	}
 
+	if os.Getenv("SECRET") == "" {
+		log.Fatal("missing SECRET from env file")
+	}
+
 	log.Printf("reading %s env file\n", environment)
 }

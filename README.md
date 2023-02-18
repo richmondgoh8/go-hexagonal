@@ -1,5 +1,5 @@
 # go-hexagonal
-Golang with Hexagonal Architecture
+Golang with Hexagonal Architecture, Uses Zap as a logging mechanism
 
 # Reference Commands Commands
 - go mod init github.com/richmondgoh8/boilerplate

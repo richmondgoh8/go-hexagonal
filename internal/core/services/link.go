@@ -1,11 +1,11 @@
-package svc
+package services
 
 import (
 	"context"
 	"errors"
-
 	"github.com/richmondgoh8/boilerplate/internal/core/domain"
 	"github.com/richmondgoh8/boilerplate/internal/core/ports"
+	"github.com/richmondgoh8/boilerplate/pkg/logger"
 )
 
 type LinkSvc struct {
@@ -25,6 +25,7 @@ func NewLinkSvc(linkRepository ports.LinkRepository) *LinkSvc {
 }
 
 func (srv *LinkSvc) GetURLData(ctx context.Context, id string) (domain.Link, error) {
+	logger.Info("Retrieving Data from DB", ctx, nil)
 	link, err := srv.linkRepository.GetURL(ctx, id)
 	if err != nil {
 		return domain.Link{}, errors.New("get link from repository has failed")

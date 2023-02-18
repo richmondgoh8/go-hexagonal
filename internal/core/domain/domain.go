@@ -7,9 +7,18 @@ type Link struct {
 	Name string `json:"name" db:"name" validate:"required"`
 }
 
+type Token struct {
+	Token string `json:"token"`
+}
+
 type SimpleResp struct {
 	Message    interface{} `json:"message"`
 	StatusCode int         `json:"statusCode"`
+}
+
+type TokenResp struct {
+	Token      string `json:"token"`
+	StatusCode int    `json:"statusCode"`
 }
 
 type ApiError struct {
