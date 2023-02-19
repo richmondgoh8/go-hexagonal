@@ -1,5 +1,5 @@
 # go-hexagonal
-Golang with Hexagonal Architecture, Uses Zap as a logging mechanism
+Golang with Hexagonal Architecture, Uses Zap as a logging mechanism & JWT Auth for Authentication
 
 # Reference Commands Commands
 - go mod init github.com/richmondgoh8/boilerplate
@@ -19,3 +19,10 @@ Ports <=> Actors
 - Variables and Unexported Functions = camelCase
 - Exported Functions & Constants = PascalCase
 - Contexts are generally used to carry custom data among handlers.
+
+# Endpoints
+```cgo
+localhost:8080/token
+localhost:8080/url/1
+localhost:8080/url/3?url=https://www.rlc4u.com&name=Richmond
+```

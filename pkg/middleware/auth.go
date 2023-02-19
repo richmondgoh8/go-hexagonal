@@ -1,6 +1,7 @@
 package custommiddleware
 
 import (
+	"context"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"log"
@@ -12,6 +13,12 @@ import (
 )
 
 var SecretKey []byte
+
+type Claims struct {
+	ID   int    `json:"id"`
+	Role string `json:"role"`
+	jwt.RegisteredClaims
+}
 
 const (
 	SECRET  string = "SECRET"
@@ -36,11 +43,13 @@ func Auth(next http.Handler) http.Handler {
 		}
 
 		jwtToken := authHeader[1]
-		token, err := jwt.Parse(jwtToken, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(jwtToken, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+			// verify the signing method
 			_, ok := token.Method.(*jwt.SigningMethodHMAC)
 			if !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
+			// return secret key for validating the token
 			return SecretKey, nil
 		})
 		if err != nil {
@@ -50,30 +59,33 @@ func Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		if claims, ok := token.Claims.(jwt.Claims); ok && token.Valid {
-			fmt.Println(claims)
-		} else {
+		claims, ok := token.Claims.(*Claims)
+		if !ok || !token.Valid {
+			log.Println("Token is invalid")
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(NO_AUTH))
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		// set to context map
+		ctx := context.WithValue(r.Context(), "jwt_claims", claims)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func GenerateToken(jwtPayload JWTPayload) (string, error) {
 	setSecret()
 
-	token := jwt.New(jwt.SigningMethodHS256)
-	/* Create a map to store our claims */
-	claims := token.Claims.(jwt.MapClaims)
+	// Create a map to set & store our token claims
+	claims := jwt.MapClaims{
+		"id":   jwtPayload.ID,
+		"role": jwtPayload.Role,
+		"iat":  time.Now().Unix(),
+		"exp":  time.Now().Add(time.Hour * 24).Unix(),
+	}
 
-	/* Set token claims */
-	claims["id"] = jwtPayload.ID
-	claims["role"] = jwtPayload.Role
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-	claims["iat"] = time.Now().Unix()
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	tokenString, err := token.SignedString(SecretKey)
 	if err != nil {
