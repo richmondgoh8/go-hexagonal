@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/richmondgoh8/boilerplate/internal/core/domain"
 )
@@ -36,7 +35,7 @@ func (db *postgres) GetURL(ctx context.Context, id string) (domain.Link, error) 
 func (db *postgres) UpdateURL(ctx context.Context, link domain.Link) error {
 	sqlQuery := "UPDATE test.links SET url=$1, name=$2 where id=$3"
 	_, err := db.postgresDB.ExecContext(ctx, sqlQuery, link.Url, link.Name, link.ID)
-	fmt.Println("hello world", err)
+
 	if err != nil {
 		return err
 	}

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/richmondgoh8/boilerplate/internal/core/domain"
 	"github.com/richmondgoh8/boilerplate/internal/core/services"
 	"net/http"
@@ -27,7 +26,6 @@ func (t *TokenHandler) Get(w http.ResponseWriter, r *http.Request) {
 	resp.StatusCode = http.StatusOK
 
 	token, err := t.tokenSvc.GetJWTToken(ctx)
-	err = errors.New("Chicken Rice")
 	if err != nil {
 		ReturnAPIErr(w, err.Error(), http.StatusInternalServerError)
 		return

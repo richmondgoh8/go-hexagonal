@@ -38,7 +38,7 @@ func main() {
 	// Start of External Dependencies Instantiation
 	localDB, err := db.Init()
 	if err != nil {
-		panic("error connecting to db")
+		panic(err)
 	}
 	// End of External Dependencies Instantiation
 

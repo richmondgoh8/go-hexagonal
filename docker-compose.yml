@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15.2-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./seed/postgres/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+  # App Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      # docker localhost itself would not work therefore map to db name
+      POSTGRES_HOST: db

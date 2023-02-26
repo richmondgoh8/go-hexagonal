@@ -16,7 +16,6 @@ const DriverName = "postgres"
 func Init() (*sqlx.DB, error) {
 	dataSource := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_USERNAME"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DBNAME"))
-
 	client, err := sqlx.Open(DriverName, dataSource)
 	if err != nil {
 		return nil, err

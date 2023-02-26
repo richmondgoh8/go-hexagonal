@@ -20,9 +20,26 @@ Ports <=> Actors
 - Exported Functions & Constants = PascalCase
 - Contexts are generally used to carry custom data among handlers.
 
+# Quickstart
+```cgo
+# Runs in Docker
+make full
+
+# Runs only Postgres in Docker
+make postgres
+go mod tidy
+make run
+```
+
 # Endpoints
 ```cgo
 localhost:8080/token
 localhost:8080/url/1
 localhost:8080/url/3?url=https://www.rlc4u.com&name=Richmond
+```
+
+# Local Docker Build Testing
+```cgo
+docker build --no-cache -t "test" .
+docker build --no-cache --progress=plain -t "test" .
 ```
