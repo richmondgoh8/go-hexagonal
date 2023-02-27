@@ -9,8 +9,12 @@ postgres:
 destroy:
 	docker-compose --log-level ERROR -f docker-compose.yml down --remove-orphans
 
-run:
+run: swagger
 	go run cmd/server.go
 
 gen:
 	mockgen -source=./internal/core/ports/ports.go -destination=./internal/mocks/core/ports/ports.go
+
+swagger:
+	which swagger || go install github.com/go-swagger/go-swagger
+	swagger generate spec -o ./swagger.yaml --scan-models

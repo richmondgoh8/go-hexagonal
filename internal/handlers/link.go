@@ -23,6 +23,26 @@ func NewURLHandlerImpl(linkSvc svc.LinkSvcImpl) *URLHandler {
 	}
 }
 
+// swagger:route GET /url/{id} URL url_get_id
+//
+// # Get URL Mapping
+//
+// This will get the key value pair of URL
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//	    Parameters:
+//	      + name: id
+//	        in: path
+//	        description: maximum numnber of results to return
+//	        required: false
+//	        type: integer
+//	        format: int32
+//
+//		Responses:
+//		  200: body:Link
 func (h *URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
@@ -53,10 +73,34 @@ func (h *URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&resp)
 }
 
+// swagger:route PUT /url/{id} URL url_update_id
+//
+// # Update URL Mapping using Form Data
+//
+// This will update the key value pair of URL ID in DB
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//	    Parameters:
+//	      + name: id
+//	        in: path
+//	        type: integer
+//	      + name: url
+//	        in: query
+//	        type: string
+//	      + name: name
+//	        in: query
+//	        type: string
+//
+//		Responses:
+//		  200: body:SimpleResp
 func (h *URLHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()
-	r.ParseForm()
+	// 2mb
+	r.ParseMultipartForm(1 << 20)
 	linkID := chi.URLParam(r, "id")
 	if _, err := strconv.Atoi(linkID); err != nil {
 		ReturnAPIErr(w, err.Error(), http.StatusBadRequest)
@@ -88,6 +132,55 @@ func (h *URLHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(&domain.SimpleResp{
 		Message:    "successfully updated records",
+		StatusCode: http.StatusOK,
+	})
+}
+
+// swagger:route POST /url URL url_create_id
+//
+// # Create URL Mapping
+//
+// This will generate the key value pair of URL
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//	    Parameters:
+//	      + name: input
+//	        in: body
+//	        type: LinkReq
+//
+//		Responses:
+//		  200: body:SimpleResp
+func (h *URLHandler) Create(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
+	var linkReq domain.LinkReq
+	if err := json.NewDecoder(r.Body).Decode(&linkReq); err != nil {
+		ReturnAPIErr(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err := validate.Struct(linkReq)
+	if err != nil {
+		validatorErr := err.(validator.ValidationErrors)
+		out := make([]domain.ApiError, len(validatorErr))
+		for i, fe := range validatorErr {
+			out[i] = domain.ApiError{Param: fe.Field(), Message: msgForTag(fe)}
+		}
+		ReturnAPIErr(w, out, http.StatusBadRequest)
+		return
+	}
+
+	err = h.linkSvc.CreateURLData(ctx, linkReq)
+	if err != nil {
+		ReturnAPIErr(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	json.NewEncoder(w).Encode(&domain.SimpleResp{
+		Message:    "successfully created records",
 		StatusCode: http.StatusOK,
 	})
 }

@@ -13,6 +13,7 @@ type LinkSvc struct {
 }
 
 type LinkSvcImpl interface {
+	CreateURLData(ctx context.Context, req domain.LinkReq) error
 	GetURLData(ctx context.Context, id string) (domain.Link, error)
 	UpdateURLData(ctx context.Context, link domain.Link) error
 }
@@ -22,6 +23,11 @@ func NewLinkSvc(linkRepository ports.LinkRepository) *LinkSvc {
 	return &LinkSvc{
 		linkRepository: linkRepository,
 	}
+}
+
+func (srv *LinkSvc) CreateURLData(ctx context.Context, req domain.LinkReq) error {
+	logger.Info("Trying to insert a record to db", ctx, nil)
+	return srv.linkRepository.CreateURL(ctx, req)
 }
 
 func (srv *LinkSvc) GetURLData(ctx context.Context, id string) (domain.Link, error) {

@@ -1,0 +1,162 @@
+basePath: /
+consumes:
+    - application/json
+definitions:
+    Link:
+        properties:
+            id:
+                type: string
+                x-go-name: ID
+            name:
+                type: string
+                x-go-name: Name
+            url:
+                description: Custom Validation required for Url
+                type: string
+                x-go-name: Url
+        type: object
+        x-go-package: github.com/richmondgoh8/boilerplate/internal/core/domain
+    LinkReq:
+        properties:
+            name:
+                type: string
+                x-go-name: Name
+            url:
+                type: string
+                x-go-name: Url
+        type: object
+        x-go-package: github.com/richmondgoh8/boilerplate/internal/core/domain
+    SimpleResp:
+        properties:
+            message:
+                x-go-name: Message
+            statusCode:
+                format: int64
+                type: integer
+                x-go-name: StatusCode
+        type: object
+        x-go-package: github.com/richmondgoh8/boilerplate/internal/core/domain
+    TokenResp:
+        properties:
+            statusCode:
+                example: 200
+                format: int64
+                type: integer
+                x-go-name: StatusCode
+            token:
+                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Nzc1MDI4ODgsImlhdCI6MTY3NzQxNjQ4OCwiaWQiOjE1LCJyb2xlIjoiYWRtaW4ifQ.QIa7EW5jts6QhyjxN7Hxv-NbaaTIE5fbB-TrfZkiwBE
+                type: string
+                x-go-name: Token
+        type: object
+        x-go-package: github.com/richmondgoh8/boilerplate/internal/core/domain
+info:
+    description: Showcases our health endpoint
+    license:
+        name: MIT
+        url: http://opensource.org/licenses/MIT
+    title: Template API.
+    version: 0.0.1
+paths:
+    /token:
+        get:
+            description: This will generate a JWT Token to use other endpoints
+            operationId: token_id
+            produces:
+                - application/json
+            responses:
+                "200":
+                    description: TokenResp
+                    schema:
+                        $ref: '#/definitions/TokenResp'
+            schemes:
+                - http
+                - https
+            summary: Get JWT Token
+            tags:
+                - Token
+    /url:
+        post:
+            description: This will generate the key value pair of URL
+            operationId: url_create_id
+            parameters:
+                - in: body
+                  name: input
+                  schema:
+                    $ref: '#/definitions/LinkReq'
+                    type: object
+            produces:
+                - application/json
+            responses:
+                "200":
+                    description: SimpleResp
+                    schema:
+                        $ref: '#/definitions/SimpleResp'
+            schemes:
+                - http
+                - https
+            summary: Create URL Mapping
+            tags:
+                - URL
+    /url/{id}:
+        get:
+            description: This will get the key value pair of URL
+            operationId: url_get_id
+            parameters:
+                - description: maximum numnber of results to return
+                  format: int32
+                  in: path
+                  name: id
+                  type: integer
+            produces:
+                - application/json
+            responses:
+                "200":
+                    description: Link
+                    schema:
+                        $ref: '#/definitions/Link'
+            schemes:
+                - http
+                - https
+            summary: Get URL Mapping
+            tags:
+                - URL
+        put:
+            description: This will update the key value pair of URL ID in DB
+            operationId: url_update_id
+            parameters:
+                - in: path
+                  name: id
+                  type: integer
+                - in: query
+                  name: url
+                  type: string
+                - in: query
+                  name: name
+                  type: string
+            produces:
+                - application/json
+            responses:
+                "200":
+                    description: SimpleResp
+                    schema:
+                        $ref: '#/definitions/SimpleResp'
+            schemes:
+                - http
+                - https
+            summary: Update URL Mapping using Form Data
+            tags:
+                - URL
+produces:
+    - application/json
+schemes:
+    - http
+    - https
+security:
+    - Bearer:
+        - '[]'
+securityDefinitions:
+    Bearer:
+        in: header
+        name: Authorization
+        type: apiKey
+swagger: "2.0"

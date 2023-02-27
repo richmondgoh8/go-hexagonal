@@ -8,7 +8,6 @@ import (
 )
 
 type TokenHandler struct {
-	//linkSvc svc.LinkSvcImpl
 	tokenSvc services.TokenSvcImpl
 }
 
@@ -18,6 +17,19 @@ func NewTokenHandler(tokenSvc services.TokenSvcImpl) *TokenHandler {
 	}
 }
 
+// swagger:route GET /token Token token_id
+//
+// # Get JWT Token
+//
+// This will generate a JWT Token to use other endpoints
+//
+//	Produces:
+//	- application/json
+//
+//	Schemes: http, https
+//
+//	Responses:
+//	  200: body:TokenResp
 func (t *TokenHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := r.Context()

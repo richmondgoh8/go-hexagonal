@@ -2,10 +2,12 @@ package main
 
 import (
 	"github.com/go-chi/chi/v5"
+	swagmiddleware "github.com/go-openapi/runtime/middleware"
 	svc "github.com/richmondgoh8/boilerplate/internal/core/services"
 	handler "github.com/richmondgoh8/boilerplate/internal/handlers"
 	"github.com/richmondgoh8/boilerplate/pkg/logger"
 	custommiddleware "github.com/richmondgoh8/boilerplate/pkg/middleware"
+	"github.com/rs/cors"
 	"log"
 	"net/http"
 	"os"
@@ -31,16 +33,28 @@ func main() {
 
 	// Start of Middleware
 	r.Use(custommiddleware.InjectTrackingID)
+	r.Use(cors.Default().Handler)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	// End of Middleware
-
 	// Start of External Dependencies Instantiation
 	localDB, err := db.Init()
 	if err != nil {
 		panic(err)
 	}
 	// End of External Dependencies Instantiation
+
+	// Start of Swagger Documentation
+	r.Get("/swagger.yaml", http.FileServer(http.Dir("./")).ServeHTTP)
+	opts := swagmiddleware.SwaggerUIOpts{
+		SpecURL: "swagger.yaml",
+	}
+	sh := swagmiddleware.SwaggerUI(opts, nil)
+	//loads.Spec("localhost:8081")
+	//opts := swagmiddleware.RedocOpts{SpecURL: "/swagger.yaml"}
+	//sh := swagmiddleware.Redoc(opts, nil)
+	r.Get("/docs", sh.ServeHTTP)
+	// End of Swagger Documentation
 
 	// Start of Dependency Injection
 	linkRepo := repo.NewPostgresInstance(localDB)
@@ -59,10 +73,10 @@ func main() {
 			r.Get("/", linkHandler.Get)
 			r.Put("/", linkHandler.Update)
 		})
+		r.Post("/", linkHandler.Create)
 	})
 
 	r.Get("/token", tokenHandler.Get)
-
 	log.Println("Running on Port:", port)
 	log.Fatal(http.ListenAndServe(":"+port, r))
 }

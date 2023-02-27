@@ -9,6 +9,7 @@ import (
 // LinkRepository contain interface definitions to communicate with Actors (Things Existing out of Core)
 // Connects with repositories folder
 type LinkRepository interface {
+	CreateURL(ctx context.Context, req domain.LinkReq) error
 	GetURL(ctx context.Context, id string) (domain.Link, error)
 	UpdateURL(ctx context.Context, link domain.Link) error
 }
